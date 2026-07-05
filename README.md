@@ -14,13 +14,13 @@
 
 ---
 
-FusionBrick é um sistema de peças modulares paramétricas para impressão 3D. Qualquer peça conecta em qualquer outra — em qualquer face, em qualquer direção — via press-fit, sem ferramentas.
+FusionBrick é um sistema de componentes modulares paramétricos para impressão 3D. Qualquer componente conecta em qualquer outro — em qualquer face, em qualquer direção — via press-fit, sem ferramentas.
 
 ![ATOM conectado via LINK](.github/assets/image1.png)
 
 ---
 
-## As Peças
+## Componentes
 
 | | **ATOM** | **PLATE** | **LINK** |
 | --- | --- | --- | --- |
@@ -32,7 +32,7 @@ FusionBrick é um sistema de peças modulares paramétricas para impressão 3D. 
 
 ## Parâmetros Globais
 
-Todos os parâmetros abaixo devem ser iguais entre as peças para garantir compatibilidade.
+Todos os parâmetros abaixo devem ser iguais entre os componentes para garantir compatibilidade.
 
 ```
 cell_size     = 20mm   // unidade base da grade
@@ -46,21 +46,38 @@ tolerance     = 0.2mm  // tolerância de impressão (ajuste por impressora)
 
 ## Início Rápido
 
-**Requisitos:** [OpenSCAD 2021+](https://openscad.org/downloads.html), impressora FDM, PLA ou PETG.
+**Requisitos:** OpenSCAD 2021+, impressora FDM, PLA ou PETG.
+
+### 1. Instalar OpenSCAD
+
+Via [download direto](https://openscad.org/downloads.html) ou via asdf:
+
+```bash
+asdf plugin add openscad
+asdf install  # lê a versão de .tool-versions (2021.01)
+```
+
+### 2. Clonar e abrir
 
 ```bash
 git clone https://github.com/wguilherme/FusionBrick.git
 cd FusionBrick
-open impl/openscad/atom.scad   # abre no OpenSCAD
+open impl/openscad/atom.scad
 ```
 
-Dentro do OpenSCAD: `F6` para renderizar → `File → Export → Export as STL`.
+Dentro do OpenSCAD: ajuste os parâmetros no painel lateral (ex: `atom_size`, `hole_d`, `border_radius`) → `F6` para renderizar → `File → Export → Export as STL`.
 
-**Gerar todos os previews e STLs via Make:**
+### 3. Gerar previews e STLs via Make
 
 ```bash
-make preview   # gera renders/img/*.png
-make build     # gera renders/stl/*.stl
+make preview   # renders/img/*.png — imagem de cada componente
+make build     # renders/stl/*.stl — STL pronto para fatiar
+```
+
+Para sobrescrever a cor dos componentes no preview:
+
+```bash
+make preview PART_COLOR="[0.8, 0.2, 0.1]"  # valores 0.0–1.0 (RGB)
 ```
 
 ---
