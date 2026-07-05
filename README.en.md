@@ -81,7 +81,7 @@ tolerance     = 0.2mm  // print fit tolerance
 
 1. Clone the repository
 ```bash
-git clone https://github.com/yourusername/fusionbrick.git
+git clone https://github.com/wguilherme/fusionbrick.git
 ```
 
 2. Open in OpenSCAD
@@ -178,7 +178,7 @@ FusionBrick follows a **spec-first** approach. The `spec/` folder defines the sy
 
 | Implementation | Status | Maintainer |
 |---|---|---|
-| OpenSCAD | ✅ Active | @yourusername |
+| OpenSCAD | ✅ Active | @wguilherme |
 | Fusion 360 | 🔜 Planned | — |
 | FreeCAD | 🔜 Planned | — |
 | MakerWorld PMM | 🔜 Planned | — |
@@ -191,8 +191,8 @@ Want to add a new implementation? Read [CONTRIBUTING.md](CONTRIBUTING.md).
 
 FusionBrick is open source and community-driven.
 
-- 🐛 **Found a bug?** Open an [issue](https://github.com/yourusername/fusionbrick/issues)
-- 💡 **Have an idea?** Start a [discussion](https://github.com/yourusername/fusionbrick/discussions)
+- 🐛 **Found a bug?** Open an [issue](https://github.com/wguilherme/fusionbrick/issues)
+- 💡 **Have an idea?** Start a [discussion](https://github.com/wguilherme/fusionbrick/discussions)
 - 🔧 **Want to contribute?** Read [CONTRIBUTING.md](CONTRIBUTING.md)
 - 🖨️ **Printed something cool?** Share it on MakerWorld tagging **#fusionbrick**
 
