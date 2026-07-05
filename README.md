@@ -44,13 +44,11 @@ Cada Brick tem furos em todas as 6 faces seguindo o mesmo padrão de grade. Um *
 
 ## As Peças
 
-| Peça | Descrição | Arquivo |
-|---|---|---|
-| **ATOM** | Unidade cúbica estrutural. Furos em todas as 6 faces. | `impl/openscad/atom.scad` |
-| **PLATE** | Superfície plana modular. Furos alinhados à grade. | `impl/openscad/plate.scad` |
-| **LINK** | Conector universal. Une quaisquer dois furos. | `impl/openscad/link.scad` |
-| **BRIDGE** | Une dois PLATEs coplanares lado a lado. | `impl/openscad/bridge.scad` |
-| **CORNER** | Une dois PLATEs a 90°. | `impl/openscad/corner.scad` |
+| | **ATOM** | **PLATE** | **LINK** |
+| --- | --- | --- | --- |
+| | ![ATOM](renders/img/atom.png) | ![PLATE](renders/img/plate.png) | ![LINK](renders/img/link.png) |
+| **Descrição** | Unidade cúbica estrutural. Furos passantes em todas as 6 faces. | Superfície plana modular. Furos alinhados à grade do ATOM. | Conector universal. Une quaisquer dois furos do sistema. |
+| **Arquivo** | `impl/openscad/atom.scad` | `impl/openscad/plate.scad` | `impl/openscad/link.scad` |
 
 ---
 
