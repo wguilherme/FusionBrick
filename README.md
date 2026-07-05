@@ -4,7 +4,7 @@
 
 # FusionBrick
 
-**Sistema de design modular open-source para makers, engenheiros e construtores.**
+**Sistema de design modular open-source para makers, engenheiros e entusiastas.**
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![OpenSCAD](https://img.shields.io/badge/OpenSCAD-v2021+-green.svg)](https://openscad.org)
@@ -53,7 +53,7 @@ tolerance     = 0.2mm  // tolerância de impressão (ajuste por impressora)
 Via [download direto](https://openscad.org/downloads.html) ou via asdf:
 
 ```bash
-asdf plugin add openscad
+asdf plugin add openscad https://github.com/gabrielelana/asdf-openscad
 asdf install  # lê a versão de .tool-versions (2021.01)
 ```
 
