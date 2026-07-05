@@ -22,7 +22,7 @@
 atom_size = 20; // [5:1:100]
 
 // Raio de arredondamento das arestas (0 = sem arredondamento)
-border_radius = 1; // [0:0.1:5]
+border_radius = 0; // [0:0.1:5]
 
 /* [Quantidade de ATOMs] */
 
