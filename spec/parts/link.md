@@ -18,8 +18,9 @@ Peça simétrica em dois sentidos, composta por dois semi-links espelhados:
   - Profundidade: `pin_depth` (varia por contexto — ver abaixo)
 - **Spacer** (opcional): haste entre os dois flanges para conectar peças com gap
   - Comprimento: `spacer` (padrão: `0`)
-- **Canal** (opcional): furo axial para passagem de fio/cabo
-  - Diâmetro: `canal_d` (padrão: `0` = sólido)
+- **Canal** (padrão aberto): furo axial para passagem de fio/cabo
+  - Diâmetro: `canal_d` (padrão: `6mm` — passagem confortável para fios/cabos)
+  - Zerar (`canal_d = 0`) fecha o canal; aumentar para cabos mais grossos
 
 ## Tolerância
 
@@ -31,8 +32,10 @@ Aumentar se apertar; diminuir se folgar.
 | Contexto | pin_depth recomendado |
 | --- | --- |
 | ATOM ↔ ATOM | `3mm` |
-| PLATE ↔ PLATE | `3mm` |
-| BRIDGE / CORNER | `≥ 5mm` (atravessa a peça + grip) |
+| ATOM ↔ PLATE | `3mm` |
+| PLATE ↔ PLATE (empilhadas) | `3mm` |
+
+Junções coplanares e a 90° não usam LINK — ver [BRIDGE](bridge.md) e [CORNER](corner.md) (interface de borda).
 
 ## Comprimento total
 

@@ -6,6 +6,7 @@ RENDERS_DIR := renders
 STL_DIR     := $(RENDERS_DIR)/stl
 IMG_DIR     := $(RENDERS_DIR)/img
 PARTS       := $(basename $(notdir $(wildcard $(IMPL_DIR)/*.scad)))
+ASSEMBLIES  := $(wildcard examples/*/assembly.scad)
 
 IMGSIZE     := 800,600
 IMG_W       := 800
@@ -15,7 +16,11 @@ COLORSCHEME := Monotone
 GRAD_TOP    := rgb(208,208,208)
 GRAD_BOT    := rgb(82, 82, 82)
 PART_COLOR  := [0.35, 0.38, 0.42]
-.PHONY: preview build
+ASM_IMGSIZE := 1200,900
+# câmera isométrica: projeção ortográfica + rotação 54.7°/25°
+ASM_CAMERA  := --projection=o --camera=0,0,0,54.7,0,25,500 --autocenter --viewall
+
+.PHONY: preview build assembly
 
 preview:
 	@mkdir -p $(IMG_DIR)
@@ -39,4 +44,25 @@ build:
 	@mkdir -p $(STL_DIR)
 	@for part in $(PARTS); do \
 		$(OPENSCAD) --export-format binstl -o $(STL_DIR)/$$part.stl $(IMPL_DIR)/$$part.scad; \
+	done
+
+assembly:
+	@for asm in $(ASSEMBLIES); do \
+		dir=$$(dirname $$asm); \
+		echo "ASSEMBLY $$dir"; \
+		$(OPENSCAD) \
+			--export-format png \
+			--imgsize=$(ASM_IMGSIZE) \
+			$(ASM_CAMERA) \
+			--preview \
+			-o $$dir/assembly.png \
+			$$asm || { echo "SKIP $$asm (render failed)"; continue; }; \
+		$(OPENSCAD) \
+			--export-format png \
+			--imgsize=$(ASM_IMGSIZE) \
+			$(ASM_CAMERA) \
+			--preview \
+			-D explode=12 \
+			-o $$dir/assembly-exploded.png \
+			$$asm; \
 	done

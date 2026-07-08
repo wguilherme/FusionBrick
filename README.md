@@ -8,7 +8,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![OpenSCAD](https://img.shields.io/badge/OpenSCAD-v2021+-green.svg)](https://openscad.org)
-[![Version](https://img.shields.io/badge/version-0.1.0-brightgreen.svg)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-0.2.0-brightgreen.svg)](CHANGELOG.md)
 
 </div>
 
@@ -16,17 +16,21 @@
 
 FusionBrick é um sistema de componentes modulares paramétricos para impressão 3D. Qualquer componente conecta em qualquer outro — em qualquer face, em qualquer direção — via press-fit, sem ferramentas.
 
-![ATOM conectado via LINK](.github/assets/image1.png)
+![Montagem em U — 3 PLATEs unidas por BRIDGEs, paredes travadas por CORNERs e ATOM conectado por LINKs](examples/u-channel/assembly.png)
+
+![Vista explodida da montagem em U](examples/u-channel/assembly-exploded.png)
 
 ---
 
 ## Componentes
 
-| | **ATOM** | **PLATE** | **LINK** |
-| --- | --- | --- | --- |
-| | ![ATOM](renders/img/atom.png) | ![PLATE](renders/img/plate.png) | ![LINK](renders/img/link.png) |
-| **Função** | Unidade cúbica. Furos passantes em 6 faces. | Superfície plana. Furos alinhados ao ATOM. | Conector universal entre quaisquer dois furos. |
-| **Fonte** | `impl/openscad/atom.scad` | `impl/openscad/plate.scad` | `impl/openscad/link.scad` |
+| Componente | Preview | Função | Fonte |
+| --- | :---: | --- | --- |
+| **ATOM** | <img src="renders/img/atom.png" width="140" alt="ATOM"> | Unidade cúbica. Furos passantes em 6 faces. | `impl/openscad/atom.scad` |
+| **PLATE** | <img src="renders/img/plate.png" width="140" alt="PLATE"> | Superfície plana. Furos alinhados ao ATOM. | `impl/openscad/plate.scad` |
+| **LINK** | <img src="renders/img/link.png" width="140" alt="LINK"> | Conector universal entre quaisquer dois furos. | `impl/openscad/link.scad` |
+| **BRIDGE** | <img src="renders/img/bridge.png" width="140" alt="BRIDGE"> | Junção coplanar invisível entre duas PLATEs. | `impl/openscad/bridge.scad` |
+| **CORNER** | <img src="renders/img/corner.png" width="140" alt="CORNER"> | Viga de canto. Une duas PLATEs a 90° via furos de borda. | `impl/openscad/corner.scad` |
 
 ---
 
@@ -40,7 +44,10 @@ hole_d        = 10mm   // diâmetro do furo
 relief_depth  = 2mm    // profundidade do rebaixo
 relief_margin = 2mm    // margem do rebaixo
 tolerance     = 0.2mm  // tolerância de impressão (ajuste por impressora)
+canal_d       = 6mm    // canal para fios em todo conector (0 = fechado)
 ```
+
+Premissas do sistema: [spec/design-system.md](spec/design-system.md) · Lei do Grid e junções: [spec/rules.md](spec/rules.md).
 
 ---
 
@@ -70,8 +77,9 @@ Dentro do OpenSCAD: ajuste os parâmetros no painel lateral (ex: `atom_size`, `h
 ### 3. Gerar previews e STLs via Make
 
 ```bash
-make preview   # renders/img/*.png — imagem de cada componente
-make build     # renders/stl/*.stl — STL pronto para fatiar
+make preview    # renders/img/*.png — imagem de cada componente
+make build      # renders/stl/*.stl — STL pronto para fatiar
+make assembly   # examples/*/assembly*.png — montagens isométricas (normal + explodida)
 ```
 
 Para sobrescrever a cor dos componentes no preview:
@@ -84,17 +92,21 @@ make preview PART_COLOR="[0.8, 0.2, 0.1]"  # valores 0.0–1.0 (RGB)
 
 ## Estrutura
 
-```
+```text
 FusionBrick/
-├── spec/          ← especificação independente de ferramenta
+├── spec/                   ← especificação independente de ferramenta
+│   ├── design-system.md    ← premissas do sistema
+│   ├── params.md           ← parâmetros globais
+│   ├── rules.md            ← Lei do Grid, interfaces, junções
+│   └── parts/              ← spec de cada peça
 ├── impl/
-│   ├── openscad/  ← implementação OpenSCAD ✅
-│   ├── fusion360/ ← planejado
-│   └── manual/    ← planejado
+│   ├── openscad/           ← implementação OpenSCAD ✅
+│   ├── fusion360/          ← planejado
+│   └── manual/             ← planejado
 ├── renders/
-│   ├── img/       ← previews PNG
-│   └── stl/       ← STLs exportados
-└── examples/      ← montagens de exemplo
+│   ├── img/                ← previews PNG
+│   └── stl/                ← STLs exportados
+└── examples/               ← montagens de exemplo (make assembly)
 ```
 
 ---
@@ -107,13 +119,22 @@ FusionBrick/
 - [x] Implementação OpenSCAD
 - [x] Especificação do sistema
 
-### v0.2.0 — Paramétrico
+### v0.2.0 — Junções & Interface de Borda ✅
+
+- [x] Interface de borda: furos Ø3 + rebaixos nas laterais das PLATEs
+- [x] BRIDGE — junção coplanar invisível (dowels + alma enterrada)
+- [x] CORNER — viga de canto 90° com nervuras e canal para fio
+- [x] Canal para circuito elétrico por padrão em todo conector
+- [x] Lei do Grid formalizada (`spec/design-system.md`, `spec/rules.md`)
+- [x] `make assembly` — montagens isométricas com teste de colisão
+
+### v0.3.0 — Paramétrico
 
 - [ ] Seleção de padrão de furos (bordas, cantos, todos)
 - [ ] Suporte multi-escala (10mm, 20mm, 30mm)
 - [ ] Upload MakerWorld PMM
 
-### v0.3.0+ — Futuro
+### v0.4.0+ — Futuro
 
 - [ ] Canais para condução elétrica
 - [ ] Conectores magnéticos
