@@ -33,7 +33,7 @@
 // - pin_depth     : profundidade que o pino entra no furo
 // - spacer        : espaço entre as duas peças (0 = flush)
 // - tolerance     : folga de encaixe (ajuste fino de impressão)
-// - canal_d       : diâmetro do canal interno para fios (0 = sólido)
+// - canal_d       : diâmetro do canal interno para fios (padrão 3mm = jumper Dupont; 0 = sólido)
 // ============================================================
 
 /* [Furos — manter igual ao ATOM/PLATE] */
@@ -65,7 +65,8 @@ tolerance = 0.2; // [0:0.05:0.5]
 /* [Canal interno para fios] */
 
 // Diâmetro do canal interno para passagem de fios (0 = sólido)
-canal_d = 0; // [0:0.1:8]
+// 6mm = passagem confortável para fios/cabos; zere para fechar
+canal_d = 6; // [0:0.1:8]
 
 /* [Qualidade] */
 $fn = 32;
@@ -146,7 +147,7 @@ echo(str("Cada metade        : ", half_length, "mm"));
 echo(str("Spacer central     : ", spacer, "mm"));
 echo(str("Diâmetro do pino   : ", pin_d, "mm (furo receptor: ", hole_d, "mm)"));
 echo(str("Diâmetro da flange : ", flange_d, "mm (relevo receptor: ", hole_d + relief_margin*2, "mm)"));
-echo(str("Canal interno      : ", canal_d > 0 ? str(canal_d, "mm") : "sólido"));
+echo(str("Canal interno      : ", canal_d > 0 ? str(canal_d, "mm") : "sólido (canal fechado)"));
 echo(str("Tolerância         : ", tolerance, "mm"));
 echo("---");
 echo(str("Compatível com PLATE thickness=5 : ", pin_depth <= 5 - relief_depth ? "SIM" : "VERIFICAR"));
