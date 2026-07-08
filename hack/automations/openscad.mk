@@ -1,6 +1,7 @@
 SHELL := /bin/bash
 OPENSCAD := openscad
 MAGICK   := magick
+FFMPEG   := ffmpeg
 IMPL_DIR    := impl/openscad
 RENDERS_DIR := renders
 STL_DIR     := $(RENDERS_DIR)/stl
@@ -35,8 +36,10 @@ ASM_ANIM_EXPLODE := 12
 ASM_ANIM_SPIN := 0
 # multiplicador de velocidade — 2 = 2x mais rápido, 0.5 = metade (padrão: 1)
 ASM_ANIM_SPEED := 1
+# frame rate do MP4 — junto com ASM_ANIM_FRAMES define a duração do loop
+ASM_VIDEO_FPS := 30
 
-.PHONY: preview preview-animated build assembly assembly-animated
+.PHONY: preview preview-animated build assembly assembly-animated assembly-video _assembly-frames
 
 preview:
 	@mkdir -p $(IMG_DIR)
@@ -112,6 +115,30 @@ preview-animated:
 		rm -rf $$tmpdir; \
 	done
 
+# Renderiza os frames do boomerang (explode/recolhe, giro opcional) para
+# $$tmpdir e ecoa "OK" ou "FAIL" — usado por assembly-animated e
+# assembly-video para não duplicar a lógica de render entre GIF e MP4.
+# Requer: asm, dir, tmpdir (variáveis do shell já definidas pelo chamador).
+define ASM_RENDER_FRAMES
+	ok=1; \
+	for i in $$(seq 0 $$(( $(ASM_ANIM_FRAMES) - 1 ))); do \
+		rot=$$(( $(ISO_AZIM) + i * $(ASM_ANIM_SPIN) / $(ASM_ANIM_FRAMES) )); \
+		frac=$$(LC_NUMERIC=C awk -v i=$$i -v n=$(ASM_ANIM_FRAMES) 'BEGIN { pi = atan2(0,-1); print (1 - cos(2*pi*i/n)) / 2 }'); \
+		explode=$$(LC_NUMERIC=C awk -v f=$$frac -v e=$(ASM_ANIM_EXPLODE) 'BEGIN { print f * e }'); \
+		frame=$$tmpdir/frame_$$(printf '%03d' $$i).png; \
+		$(OPENSCAD) \
+			--export-format png \
+			--imgsize=$(ASM_IMGSIZE) \
+			--projection=o \
+			--camera=0,0,0,$(ISO_ELEV),0,$$rot,500 \
+			--autocenter --viewall \
+			--preview \
+			-D "explode=$$explode" \
+			-o $$frame \
+			$$asm 2>/dev/null || { echo "SKIP $$asm (render failed)"; ok=0; break; }; \
+	done;
+endef
+
 # Explode e recolhe (boomerang) — loop perfeito, câmera isométrica fixa
 # por padrão (ASM_ANIM_SPIN=0). Se ASM_ANIM_SPIN > 0, soma um giro
 # completo ao ângulo isométrico inicial (ISO_AZIM) enquanto anima.
@@ -122,27 +149,30 @@ assembly-animated:
 		dir=$$(dirname $$asm); \
 		echo "ANIMATE ASSEMBLY $$dir"; \
 		tmpdir=$$(mktemp -d); \
-		ok=1; \
-		for i in $$(seq 0 $$(( $(ASM_ANIM_FRAMES) - 1 ))); do \
-			rot=$$(( $(ISO_AZIM) + i * $(ASM_ANIM_SPIN) / $(ASM_ANIM_FRAMES) )); \
-			frac=$$(LC_NUMERIC=C awk -v i=$$i -v n=$(ASM_ANIM_FRAMES) 'BEGIN { pi = atan2(0,-1); print (1 - cos(2*pi*i/n)) / 2 }'); \
-			explode=$$(LC_NUMERIC=C awk -v f=$$frac -v e=$(ASM_ANIM_EXPLODE) 'BEGIN { print f * e }'); \
-			frame=$$tmpdir/frame_$$(printf '%03d' $$i).png; \
-			$(OPENSCAD) \
-				--export-format png \
-				--imgsize=$(ASM_IMGSIZE) \
-				--projection=o \
-				--camera=0,0,0,$(ISO_ELEV),0,$$rot,500 \
-				--autocenter --viewall \
-				--preview \
-				-D "explode=$$explode" \
-				-o $$frame \
-				$$asm 2>/dev/null || { echo "SKIP $$asm (render failed)"; ok=0; break; }; \
-		done; \
+		$(ASM_RENDER_FRAMES) \
 		if [ $$ok -eq 1 ]; then \
 			eff_delay=$$(LC_NUMERIC=C awk -v d=$(ASM_ANIM_DELAY) -v s=$(ASM_ANIM_SPEED) 'BEGIN { v = d / s; print (v < 1) ? 1 : int(v + 0.5) }'); \
 			$(MAGICK) -delay $$eff_delay -loop 0 $$tmpdir/frame_*.png $$dir/assembly.gif; \
 			echo "  -> $$dir/assembly.gif (delay=$$eff_delay)"; \
+		fi; \
+		rm -rf $$tmpdir; \
+	done
+
+# Mesmo boomerang do assembly-animated, exportado como MP4 (H.264) —
+# bem mais leve que o GIF equivalente, ideal para docs/ e compartilhamento.
+# fps efetivo = ASM_VIDEO_FPS * ASM_ANIM_SPEED (duração do loop muda com a velocidade).
+assembly-video:
+	@for asm in $(ASSEMBLIES); do \
+		dir=$$(dirname $$asm); \
+		echo "VIDEO ASSEMBLY $$dir"; \
+		tmpdir=$$(mktemp -d); \
+		$(ASM_RENDER_FRAMES) \
+		if [ $$ok -eq 1 ]; then \
+			eff_fps=$$(LC_NUMERIC=C awk -v f=$(ASM_VIDEO_FPS) -v s=$(ASM_ANIM_SPEED) 'BEGIN { print f * s }'); \
+			$(FFMPEG) -y -loglevel error -framerate $$eff_fps -i $$tmpdir/frame_%03d.png \
+				-vf "format=yuv420p" -movflags +faststart \
+				$$dir/assembly.mp4; \
+			echo "  -> $$dir/assembly.mp4 (fps=$$eff_fps)"; \
 		fi; \
 		rm -rf $$tmpdir; \
 	done

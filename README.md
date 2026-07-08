@@ -170,4 +170,4 @@ Quer contribuir? [Abra uma issue](https://github.com/wguilherme/FusionBrick/issu
 
 ---
 
-Feito com ❤️ por makers, para makers — [@wguilherme](https://github.com/wguilherme)
+Feito com ❤️ para quem constrói  — [@wguilherme](https://github.com/wguilherme)
