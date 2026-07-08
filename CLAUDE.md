@@ -11,9 +11,15 @@ Parametric modular 3D design system for FDM printing. Parts connect on any face 
 ## Commands
 
 ```bash
-make preview                          # render PNG for every part in impl/openscad/
+make preview                          # isometric PNG for every part in impl/openscad/
+make preview-animated                 # 360° turntable GIF for every part (renders/img/*.gif)
+make preview-animated ANIM_DELAY=10 ANIM_FRAMES=72  # slower/smoother (defaults: 15, 36)
 make build                            # export STL for every part in impl/openscad/
 make assembly                         # isometric PNGs (normal + exploded) for every examples/*/assembly.scad
+make assembly-animated                # looping GIF (360° spin + explode/collapse) for every examples/*/assembly.scad
+make assembly-animated ASM_ANIM_DELAY=10 ASM_ANIM_FRAMES=96 ASM_ANIM_EXPLODE=20  # tune (defaults: 5, 72, 12)
+make assembly-animated ASM_ANIM_SPIN=360                                        # enable full rotation (default: 0 — fixed isometric camera)
+make assembly-animated ASM_ANIM_SPEED=2                                         # 2x faster (default: 1; 0.5 = half speed)
 make preview PART_COLOR="[r,g,b]"    # override render color (values 0.0–1.0)
 make openscad-preview                 # explicit namespace alias
 make openscad-build
