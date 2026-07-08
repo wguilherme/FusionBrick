@@ -16,9 +16,7 @@
 
 FusionBrick é um sistema de componentes modulares paramétricos para impressão 3D. Qualquer componente conecta em qualquer outro — em qualquer face, em qualquer direção — via press-fit, sem ferramentas.
 
-![Montagem em U — 3 PLATEs unidas por BRIDGEs, paredes travadas por CORNERs e ATOM conectado por LINKs](examples/u-channel/assembly.png)
-
-![Vista explodida da montagem em U](examples/u-channel/assembly-exploded.png)
+![Montagem em U — 3 PLATEs unidas por BRIDGEs, paredes travadas por CORNERs e ATOM conectado por LINKs](examples/u-channel/assembly.gif)
 
 ---
 
@@ -26,11 +24,11 @@ FusionBrick é um sistema de componentes modulares paramétricos para impressão
 
 | Componente | Preview | Função | Fonte |
 | --- | :---: | --- | --- |
-| **ATOM** | <img src="renders/img/atom.png" width="140" alt="ATOM"> | Unidade cúbica. Furos passantes em 6 faces. | `impl/openscad/atom.scad` |
-| **PLATE** | <img src="renders/img/plate.png" width="140" alt="PLATE"> | Superfície plana. Furos alinhados ao ATOM. | `impl/openscad/plate.scad` |
-| **LINK** | <img src="renders/img/link.png" width="140" alt="LINK"> | Conector universal entre quaisquer dois furos. | `impl/openscad/link.scad` |
-| **BRIDGE** | <img src="renders/img/bridge.png" width="140" alt="BRIDGE"> | Junção coplanar invisível entre duas PLATEs. | `impl/openscad/bridge.scad` |
-| **CORNER** | <img src="renders/img/corner.png" width="140" alt="CORNER"> | Viga de canto. Une duas PLATEs a 90° via furos de borda. | `impl/openscad/corner.scad` |
+| **ATOM** | <img src="renders/img/atom.gif" width="140" alt="ATOM"> | Unidade cúbica. Furos passantes em 6 faces. | `impl/openscad/atom.scad` |
+| **PLATE** | <img src="renders/img/plate.gif" width="140" alt="PLATE"> | Superfície plana. Furos alinhados ao ATOM. | `impl/openscad/plate.scad` |
+| **LINK** | <img src="renders/img/link.gif" width="140" alt="LINK"> | Conector universal entre quaisquer dois furos. | `impl/openscad/link.scad` |
+| **BRIDGE** | <img src="renders/img/bridge.gif" width="140" alt="BRIDGE"> | Junção coplanar invisível entre duas PLATEs. | `impl/openscad/bridge.scad` |
+| **CORNER** | <img src="renders/img/corner.gif" width="140" alt="CORNER"> | Viga de canto. Une duas PLATEs a 90° via furos de borda. | `impl/openscad/corner.scad` |
 
 ---
 
@@ -77,9 +75,11 @@ Dentro do OpenSCAD: ajuste os parâmetros no painel lateral (ex: `atom_size`, `h
 ### 3. Gerar previews e STLs via Make
 
 ```bash
-make preview    # renders/img/*.png — imagem de cada componente
-make build      # renders/stl/*.stl — STL pronto para fatiar
-make assembly   # examples/*/assembly*.png — montagens isométricas (normal + explodida)
+make preview            # renders/img/*.png — imagem isométrica de cada componente
+make preview-animated   # renders/img/*.gif — giro 360° de cada componente
+make build              # renders/stl/*.stl — STL pronto para fatiar
+make assembly           # examples/*/assembly*.png — montagens isométricas (normal + explodida)
+make assembly-animated  # examples/*/assembly.gif — giro 360° com explode/recolhe em loop
 ```
 
 Para sobrescrever a cor dos componentes no preview:
@@ -87,6 +87,21 @@ Para sobrescrever a cor dos componentes no preview:
 ```bash
 make preview PART_COLOR="[0.8, 0.2, 0.1]"  # valores 0.0–1.0 (RGB)
 ```
+
+Velocidade/suavidade dos GIFs animados:
+
+```bash
+make preview-animated ANIM_DELAY=10   # delay entre frames em 1/100s (padrão: 15)
+make preview-animated ANIM_FRAMES=72  # frames por volta — mais suave (padrão: 36)
+
+make assembly-animated ASM_ANIM_DELAY=10    # delay entre frames (padrão: 5)
+make assembly-animated ASM_ANIM_FRAMES=96   # frames no loop completo (padrão: 72)
+make assembly-animated ASM_ANIM_EXPLODE=20  # afastamento máximo em mm (padrão: 12)
+make assembly-animated ASM_ANIM_SPIN=360    # habilita o giro completo (padrão: 0 — câmera isométrica fixa)
+make assembly-animated ASM_ANIM_SPEED=2     # 2x mais rápido (padrão: 1; 0.5 = metade da velocidade)
+```
+
+Por padrão a câmera fica travada no ângulo isométrico (45°/54.7°) e a animação só abre/recolhe a montagem.
 
 ---
 

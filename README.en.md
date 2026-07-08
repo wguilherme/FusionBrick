@@ -38,9 +38,7 @@ FusionBrick is built around one rule:
 
 Every Brick has holes on all 6 faces following the same grid pattern. A **Link** (separate connector piece) joins any two holes together — press-fit for prototyping, glued for permanent builds.
 
-![U-channel assembly — 3 PLATEs joined by BRIDGEs, walls locked by CORNERs, ATOM connected via LINKs](examples/u-channel/assembly.png)
-
-![Exploded view of the U-channel assembly](examples/u-channel/assembly-exploded.png)
+![U-channel assembly — 3 PLATEs joined by BRIDGEs, walls locked by CORNERs, ATOM connected via LINKs](examples/u-channel/assembly.gif)
 
 ---
 
@@ -48,11 +46,11 @@ Every Brick has holes on all 6 faces following the same grid pattern. A **Link**
 
 | Piece | Preview | Description | File |
 | --- | :---: | --- | --- |
-| **ATOM** | <img src="renders/img/atom.png" width="140" alt="ATOM"> | Cubic structural unit. Holes on all 6 faces. | `impl/openscad/atom.scad` |
-| **PLATE** | <img src="renders/img/plate.png" width="140" alt="PLATE"> | Flat modular surface. Grid-aligned holes. | `impl/openscad/plate.scad` |
-| **LINK** | <img src="renders/img/link.png" width="140" alt="LINK"> | Universal connector. Joins any two holes. | `impl/openscad/link.scad` |
-| **BRIDGE** | <img src="renders/img/bridge.png" width="140" alt="BRIDGE"> | Invisible coplanar joint between two PLATEs. | `impl/openscad/bridge.scad` |
-| **CORNER** | <img src="renders/img/corner.png" width="140" alt="CORNER"> | Corner beam. Joins two PLATEs at 90° via edge holes. | `impl/openscad/corner.scad` |
+| **ATOM** | <img src="renders/img/atom.gif" width="140" alt="ATOM"> | Cubic structural unit. Holes on all 6 faces. | `impl/openscad/atom.scad` |
+| **PLATE** | <img src="renders/img/plate.gif" width="140" alt="PLATE"> | Flat modular surface. Grid-aligned holes. | `impl/openscad/plate.scad` |
+| **LINK** | <img src="renders/img/link.gif" width="140" alt="LINK"> | Universal connector. Joins any two holes. | `impl/openscad/link.scad` |
+| **BRIDGE** | <img src="renders/img/bridge.gif" width="140" alt="BRIDGE"> | Invisible coplanar joint between two PLATEs. | `impl/openscad/bridge.scad` |
+| **CORNER** | <img src="renders/img/corner.gif" width="140" alt="CORNER"> | Corner beam. Joins two PLATEs at 90° via edge holes. | `impl/openscad/corner.scad` |
 
 ---
 
