@@ -27,8 +27,11 @@ FusionBrick é um sistema de componentes modulares paramétricos para impressão
 | **ATOM** | <img src="renders/img/atom.gif" width="140" alt="ATOM"> | Unidade cúbica. Furos passantes em 6 faces. | `impl/openscad/atom.scad` |
 | **PLATE** | <img src="renders/img/plate.gif" width="140" alt="PLATE"> | Superfície plana. Furos alinhados ao ATOM. | `impl/openscad/plate.scad` |
 | **LINK** | <img src="renders/img/link.gif" width="140" alt="LINK"> | Conector universal entre quaisquer dois furos. | `impl/openscad/link.scad` |
-| **BRIDGE** | <img src="renders/img/bridge.gif" width="140" alt="BRIDGE"> | Junção coplanar invisível entre duas PLATEs. | `impl/openscad/bridge.scad` |
+| **BRIDGE** | <img src="renders/img/bridge.gif" width="140" alt="BRIDGE"> | Dowel de junção coplanar invisível (PLATE↔PLATE, PLATE↔ATOM). | `impl/openscad/bridge.scad` |
 | **CORNER** | <img src="renders/img/corner.gif" width="140" alt="CORNER"> | Viga de canto. Une duas PLATEs a 90° via furos de borda. | `impl/openscad/corner.scad` |
+| **PIN** | <img src="renders/img/pin.gif" width="140" alt="PIN"> | Viga conectora configurável: pino, furo ou nada em cada face. Com presets. | `impl/openscad/pin.scad` |
+| **ELBOW** | <img src="renders/img/elbow.gif" width="140" alt="ELBOW"> | Curva 90° com canto externo arredondado. Fio vira a esquina por dentro. | `impl/openscad/elbow.scad` |
+| **VERTEX** | <img src="renders/img/vertex.gif" width="140" alt="VERTEX"> | Quina 3-vias com ponta arredondada. Une base + 2 paredes num vértice. | `impl/openscad/vertex.scad` |
 
 ---
 
@@ -136,9 +139,11 @@ FusionBrick/
 
 ### v0.2.0 — Junções & Interface de Borda ✅
 
-- [x] Interface de borda: furos Ø3 + rebaixos nas laterais das PLATEs
-- [x] BRIDGE — junção coplanar invisível (dowels + alma enterrada)
-- [x] CORNER — viga de canto 90° com nervuras e canal para fio
+- [x] Interface de borda: furos Ø3 nas extremidades de PLATEs e ATOMs, com rebaixo para colar
+- [x] BRIDGE — dowel de junção coplanar invisível com colar central
+- [x] CORNER — viga de canto 90° com canal para fio; dois CORNERs formam "L" flush
+- [x] PIN — viga conectora configurável (pino/furo/nada por face) com presets
+- [x] ELBOW — curva 90° arredondada; VERTEX — quina 3-vias com ponta arredondada
 - [x] Canal para circuito elétrico por padrão em todo conector
 - [x] Lei do Grid formalizada (`spec/design-system.md`, `spec/rules.md`)
 - [x] `make assembly` — montagens isométricas com teste de colisão

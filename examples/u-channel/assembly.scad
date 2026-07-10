@@ -60,10 +60,11 @@ module base_plates() {
             plate();
 }
 
-// BRIDGEs enterradas nas junções x=20 e x=40
+// BRIDGEs (dowels) enterradas nas junções x=20 e x=40 —
+// 2 por junção, nos furos de borda a 2.5 e 17.5 de cada célula
 module base_bridges() {
-    for (i = [1 : 2])
-        translate([i * 20 + (i - 0.5) * explode, 10, 2.5])
+    for (i = [1 : 2], y = [2.5, 17.5])
+        translate([i * 20 + (i - 0.5) * explode, y, 2.5])
             bridge();
 }
 
@@ -85,7 +86,8 @@ module corner_right() {
 }
 
 module inner_atom() {
-    translate([10, 10, 15 + explode * 2]) atom_unit();
+    // atom() ocupa [0,20]³ — posicionado na primeira célula, sobre a base
+    translate([0, 0, 5 + explode * 2]) atom();
 }
 
 module inner_links() {

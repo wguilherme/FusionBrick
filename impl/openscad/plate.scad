@@ -56,6 +56,9 @@ relief_margin = 2; // [0.5:0.1:5]
 // Raio de arredondamento das bordas externas (0 = sem arredondamento)
 border_radius = 0; // [0:0.1:5]
 
+// Estilo do acabamento das arestas: round (raio) ou chamfer (chanfro 45°)
+border_style = "round"; // [round, chamfer]
+
 /* [Furos de borda — interface lateral] */
 
 // Diâmetro dos furos de borda (0 = sem furos de borda)
@@ -65,13 +68,16 @@ edge_hole_d = 3; // [0:0.1:5]
 // Profundidade dos furos de borda (mm)
 edge_hole_depth = 4; // [1:0.5:10]
 
-// Profundidade do rebaixo de borda — pocket entre os 2 furos
-// de cada célula; recebe a alma do BRIDGE e a nervura do
-// CORNER (0 = desativado)
-edge_relief_depth = 1.5; // [0:0.1:3]
+// Distância do centro do furo até a extremidade da célula
+// (= thickness/2 — alinha com o centro da seção do CORNER)
+edge_inset = 2.5; // [1:0.25:5]
 
-// Altura do rebaixo de borda, na direção da espessura (mm)
-edge_relief_height = 2; // [0:0.1:4]
+// Rebaixo na boca do furo — recebe o colar do pino (trava de
+// profundidade). Largura radial = 1 bico de 0.4mm (0 = sem rebaixo)
+edge_collar_w = 0.4; // [0:0.1:1]
+
+// Profundidade do rebaixo do colar (mm)
+edge_collar_depth = 1; // [0.5:0.25:2]
 
 /* [Qualidade] */
 
@@ -101,7 +107,21 @@ safe_radius = min(border_radius, thickness / 2 - 0.01, cell_size / 2 - 0.01);
 // ============================================================
 
 // ------------------------------------------------------------
-// Módulo: corpo da placa com border radius opcional
+// Módulo: sólido de acabamento das arestas — esfera (round)
+// ou octaedro (chamfer 45°), usado no minkowski
+// ------------------------------------------------------------
+module border_finish(r) {
+    if (border_style == "chamfer")
+        polyhedron(
+            points = [[r,0,0],[-r,0,0],[0,r,0],[0,-r,0],[0,0,r],[0,0,-r]],
+            faces  = [[4,2,0],[4,1,2],[4,3,1],[4,0,3],[5,0,2],[5,2,1],[5,1,3],[5,3,0]]
+        );
+    else
+        sphere(r = r);
+}
+
+// ------------------------------------------------------------
+// Módulo: corpo da placa com acabamento de aresta opcional
 // ------------------------------------------------------------
 module plate_body() {
     if (safe_radius <= 0) {
@@ -112,7 +132,7 @@ module plate_body() {
         inner_z = thickness - 2 * safe_radius;
         minkowski() {
             cube([inner_x, inner_y, inner_z], center = true);
-            sphere(r = safe_radius);
+            border_finish(safe_radius);
         }
     }
 }
@@ -150,67 +170,52 @@ module hole_grid() {
 }
 
 // ------------------------------------------------------------
-// Módulo: furos de borda — 2 por célula, passo cell_size/2
-// Centrados na espessura, em todas as 4 bordas
-// Posições: centro da célula ± cell_size/4 → passo uniforme
-// de 10mm inclusive atravessando junções entre PLATEs
+// Módulo: furos de borda — 2 por célula, NAS EXTREMIDADES:
+// a edge_inset (= thickness/2) de cada limite da célula.
+// Centrados na espessura, em todas as 4 bordas.
+// Dentro da célula os furos distam cell_size - 2*edge_inset;
+// através de uma junção distam 2*edge_inset — o centro de cada
+// furo alinha com o centro da seção do CORNER (thickness/2)
 // ------------------------------------------------------------
+// Furo de borda: bore Ø3 + rebaixo do colar na boca
+module edge_hole_cut() {
+    eps = 0.01;
+    cylinder(d = edge_hole_d, h = edge_hole_depth + eps);
+    if (edge_collar_w > 0)
+        cylinder(d = edge_hole_d + 2 * edge_collar_w, h = edge_collar_depth + eps);
+}
+
 module edge_holes() {
     eps = 0.01;
 
     // Bordas +Y e -Y (furos ao longo do eixo X)
     for (ix = [0 : qty_x - 1], s = [-1, 1]) {
-        x = ix * cell_size + cell_size / 2 + s * cell_size / 4 - total_x / 2;
+        x = ix * cell_size + cell_size / 2 + s * (cell_size / 2 - edge_inset) - total_x / 2;
 
         // Borda +Y — rotate([90,0,0]) aponta para -Y (fura para dentro)
         translate([x, total_y / 2 + eps, 0])
             rotate([90, 0, 0])
-                cylinder(d = edge_hole_d, h = edge_hole_depth + eps);
+                edge_hole_cut();
 
         // Borda -Y — rotate NEGATIVO aponta para +Y
         translate([x, -total_y / 2 - eps, 0])
             rotate([-90, 0, 0])
-                cylinder(d = edge_hole_d, h = edge_hole_depth + eps);
+                edge_hole_cut();
     }
 
     // Bordas +X e -X (furos ao longo do eixo Y)
     for (iy = [0 : qty_y - 1], s = [-1, 1]) {
-        y = iy * cell_size + cell_size / 2 + s * cell_size / 4 - total_y / 2;
+        y = iy * cell_size + cell_size / 2 + s * (cell_size / 2 - edge_inset) - total_y / 2;
 
         // Borda +X — fura para dentro (-X)
         translate([total_x / 2 + eps, y, 0])
             rotate([0, -90, 0])
-                cylinder(d = edge_hole_d, h = edge_hole_depth + eps);
+                edge_hole_cut();
 
         // Borda -X — fura para dentro (+X)
         translate([-total_x / 2 - eps, y, 0])
             rotate([0, 90, 0])
-                cylinder(d = edge_hole_d, h = edge_hole_depth + eps);
-    }
-}
-
-// ------------------------------------------------------------
-// Módulo: rebaixos de borda — pocket entre os 2 furos de cada
-// célula, centrado na espessura, nas 4 bordas
-// ------------------------------------------------------------
-module edge_reliefs() {
-    eps = 0.01;
-    len = cell_size / 2;   // vão entre os 2 furos da célula
-
-    // Bordas +Y e -Y
-    for (ix = [0 : qty_x - 1]) {
-        xc = ix * cell_size + cell_size / 2 - total_x / 2;
-        for (sy = [-1, 1])
-            translate([xc, sy * (total_y / 2 - edge_relief_depth / 2 + eps / 2), 0])
-                cube([len, edge_relief_depth + eps, edge_relief_height], center = true);
-    }
-
-    // Bordas +X e -X
-    for (iy = [0 : qty_y - 1]) {
-        yc = iy * cell_size + cell_size / 2 - total_y / 2;
-        for (sx = [-1, 1])
-            translate([sx * (total_x / 2 - edge_relief_depth / 2 + eps / 2), yc, 0])
-                cube([edge_relief_depth + eps, len, edge_relief_height], center = true);
+                edge_hole_cut();
     }
 }
 
@@ -223,8 +228,6 @@ module plate() {
         hole_grid();
         if (edge_hole_d > 0)
             edge_holes();
-        if (edge_relief_depth > 0 && edge_relief_height > 0)
-            edge_reliefs();
     }
 }
 
@@ -240,7 +243,6 @@ color(part_color) plate();
 echo("=== PLATE ===");
 echo(str("Dimensões          : ", total_x, " × ", total_y, " × ", thickness, "mm (", qty_x, "×", qty_y, " células)"));
 echo(str("Furos de face      : ", qty_x * qty_y, " × Ø", hole_d, "mm"));
-echo(str("Furos de borda     : ", edge_hole_d > 0 ? str((qty_x + qty_y) * 4, " × Ø", edge_hole_d, "mm, prof. ", edge_hole_depth, "mm, passo ", cell_size / 2, "mm") : "desativados"));
-echo(str("Rebaixos de borda  : ", edge_relief_depth > 0 ? str(cell_size / 2, " × ", edge_relief_depth, " × ", edge_relief_height, "mm por célula") : "desativados"));
+echo(str("Furos de borda     : ", edge_hole_d > 0 ? str((qty_x + qty_y) * 4, " × Ø", edge_hole_d, "mm, prof. ", edge_hole_depth, "mm, a ", edge_inset, "mm das extremidades") : "desativados"));
 echo("---");
 echo(str("Parede nos furos de borda: ", edge_hole_d == 0 || thickness >= edge_hole_d + 2 ? "SIM (>= 1mm por lado)" : "VERIFICAR (thickness < edge_hole_d + 2)"));

@@ -32,6 +32,10 @@ asdf plugin add openscad https://github.com/gabrielelana/asdf-openscad
 asdf install   # installs openscad version from .tool-versions
 ```
 
+## Building models
+
+To build a new model/assembly from a user description, use the `fusionbrick-builder` skill (`.claude/skills/fusionbrick-builder/SKILL.md`). It contains the validated module coordinate tables, joint patterns, render commands and the collision-test workflow. Result goes to `examples/<name>/assembly.scad`.
+
 ## Architecture
 
 ### Spec → Impl separation
@@ -59,7 +63,8 @@ Every `.scad` file follows this order: parameters → derived values → modules
 
 ```openscad
 part_color = [0.35, 0.38, 0.42];   // default; overridden by make via -D
-border_radius = 0;                   // default 0; make preview injects 1
+border_radius = 0;                   // default 0 (VERTEX: 2)
+border_style = "round";              // "round" (sphere) | "chamfer" (45° octahedron minkowski)
 color(part_color) my_part();
 ```
 

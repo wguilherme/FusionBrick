@@ -49,8 +49,11 @@ Every Brick has holes on all 6 faces following the same grid pattern. A **Link**
 | **ATOM** | <img src="renders/img/atom.gif" width="140" alt="ATOM"> | Cubic structural unit. Holes on all 6 faces. | `impl/openscad/atom.scad` |
 | **PLATE** | <img src="renders/img/plate.gif" width="140" alt="PLATE"> | Flat modular surface. Grid-aligned holes. | `impl/openscad/plate.scad` |
 | **LINK** | <img src="renders/img/link.gif" width="140" alt="LINK"> | Universal connector. Joins any two holes. | `impl/openscad/link.scad` |
-| **BRIDGE** | <img src="renders/img/bridge.gif" width="140" alt="BRIDGE"> | Invisible coplanar joint between two PLATEs. | `impl/openscad/bridge.scad` |
+| **BRIDGE** | <img src="renders/img/bridge.gif" width="140" alt="BRIDGE"> | Invisible coplanar joint dowel (PLATE↔PLATE, PLATE↔ATOM). | `impl/openscad/bridge.scad` |
 | **CORNER** | <img src="renders/img/corner.gif" width="140" alt="CORNER"> | Corner beam. Joins two PLATEs at 90° via edge holes. | `impl/openscad/corner.scad` |
+| **PIN** | <img src="renders/img/pin.gif" width="140" alt="PIN"> | Configurable connector beam: pin, hole or none per face. With presets. | `impl/openscad/pin.scad` |
+| **ELBOW** | <img src="renders/img/elbow.gif" width="140" alt="ELBOW"> | 90° curve with rounded outer corner. Wire turns the corner inside. | `impl/openscad/elbow.scad` |
+| **VERTEX** | <img src="renders/img/vertex.gif" width="140" alt="VERTEX"> | 3-way rounded-tip corner. Joins base + 2 walls at a vertex. | `impl/openscad/vertex.scad` |
 
 ---
 

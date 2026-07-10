@@ -15,10 +15,18 @@ Viga de canto. Preenche a lacuna `wall_thickness × plate_thickness` que sobra q
 ```
 
 - **Corpo**: prisma `wall_thickness × plate_thickness × (cells × cell_size)`
-- **Pinos** em 2 faces perpendiculares: `edge_pin_d = edge_hole_d - tolerance = 2.8mm`, comprimento `3.5mm` (< profundidade do furo de borda, para não bater no fundo)
-- **Posições**: 2 pinos por célula, centro da célula ± `cell_size/4` → passo uniforme `cell_size/2 = 10mm` (ver [interface de borda](../rules.md))
-- **Nervuras** (padrão ativas): preenchem os rebaixos de borda das duas PLATEs — `9.8 × 1.3 × 1.8mm` por célula em cada face; + cisalhamento e anti-deslizamento
-- **Canal**: `canal_d = 3mm` axial ao longo da viga — passa jumper Dupont (0 = fechado)
+- **Pinos** em 2 faces perpendiculares: `edge_pin_d = edge_hole_d - tolerance = 2.8mm`, comprimento `3.5mm` (< profundidade do furo de borda, para não bater no fundo), com colar `Ø3.6 × 1mm` na raiz (trava de profundidade + reforço)
+- **Posições**: 2 pinos por célula, **nas extremidades** — a `edge_inset = 2.5mm` de cada limite da célula (mesmas posições dos furos de borda de PLATE/ATOM)
+- **Canal**: `canal_d = 3mm` axial ao longo da viga — passa jumper Dupont e serve de soquete para o pino de outro CORNER (0 = fechado); bocas com rebaixo `Ø3.8 × 1mm` para o colar do pino
+- **Acabamento**: `border_radius` (padrão `0`) + `border_style` `round`/`chamfer` nas arestas da viga
+
+## Encaixe em L (CORNER ↔ CORNER)
+
+O pino da ponta fica a `edge_inset = 2.5mm` do fim da viga = **centro da seção** (`5/2`). Duas vigas perpendiculares formam um "L" flush:
+
+- Viga B em pé sobre a face de pinos da viga A, na região da ponta
+- O pino da ponta de A entra no **canal axial** (Ø3) de B — press-fit igual furo de borda
+- Faces externas alinham exatamente: sem sobra, sem beirada
 
 ## Lei do Grid — preservada
 
