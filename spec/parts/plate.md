@@ -8,7 +8,7 @@ Superfície plana modular. Grid de furos alinhado ao ATOM.
 - `qty_x` e `qty_y`: padrão `1` (unidade mínima — 1×1 = 20×20mm)
 - `cell_size` deve ser igual ao `atom_size` do ATOM para garantir alinhamento
 - `thickness` mínima: `(relief_depth × 2) + 1mm` → padrão mínimo: `5mm`
-- `border_radius` opcional (padrão: `0`)
+- `border_radius` opcional (padrão: `0`) + `border_style`: `round` (raio) ou `chamfer` (chanfro 45°)
 
 ## Furos
 
@@ -20,19 +20,14 @@ Superfície plana modular. Grid de furos alinhado ao ATOM.
 
 ## Furos de borda
 
-Interface lateral nas 4 bordas — recebe pinos do [CORNER](corner.md) e futuros dowels, sem consumir furos de face nem rebaixos.
+Interface lateral nas 4 bordas — recebe os pinos do [CORNER](corner.md) e os dowels do [BRIDGE](bridge.md), sem consumir furos de face nem rebaixos. Só pino → furo, sem rebaixos laterais.
 
 - Diâmetro: `edge_hole_d = 3mm` (máximo seguro: `thickness - 2mm` de parede; `0` desativa)
 - Profundidade: `edge_hole_depth = 4mm`
-- Posição: centrados na espessura; 2 por célula, centro da célula ± `cell_size/4`
-- Passo resultante: `cell_size/2 = 10mm`, uniforme inclusive atravessando junções entre PLATEs
-
-### Rebaixo de borda
-
-Pocket raso entre os 2 furos de cada célula, em todas as bordas — recebe a alma do [BRIDGE](bridge.md) e a nervura do [CORNER](corner.md):
-
-- Dimensões: `cell_size/2 × edge_relief_depth × edge_relief_height` = `10 × 1.5 × 2mm`
-- Centrado na espessura; `edge_relief_depth = 0` desativa
+- Posição: centrados na espessura; 2 por célula, **nas extremidades** — a `edge_inset = 2.5mm` (= `thickness/2`) de cada limite da célula
+- Distâncias resultantes: `15mm` entre os furos da mesma célula; `5mm` entre furos através de junções — cada furo alinha com o centro da seção do CORNER
+- Rebaixo do colar: boca de cada furo com `Ø3.8 × 1mm` — assenta o colar do pino (trava de profundidade)
+- Nota: furos perpendiculares próximos ao mesmo canto se cruzam internamente (profundidade 4 > inset 2.5) — esperado; o pino mantém agarre na maior parte da circunferência
 
 ## Compatibilidade
 

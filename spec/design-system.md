@@ -35,7 +35,7 @@ Cada interface tem seu papel; junções não consomem o recurso das outras.
 | Interface | Onde | Serve para |
 | --- | --- | --- |
 | Face (furo `Ø10` + rebaixo `Ø14×2`) | faces de ATOM e PLATE | LINK, empilhamento, fixação de módulos |
-| Borda (furo `Ø3` + rebaixo `10×1.5×2`) | bordas de PLATE | BRIDGE, CORNER — junções estruturais |
+| Borda (furo `Ø3` nas extremidades) | bordas de PLATE, faces laterais de ATOM | BRIDGE, CORNER — junções estruturais |
 
 Consequência: montar uma junção nunca impede montar um módulo — ATOM assenta sobre qualquer junção.
 

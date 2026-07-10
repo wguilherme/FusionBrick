@@ -1,13 +1,6 @@
 {
   "permissions": {
-    "allow": [
-      "Bash(magick renders/img/atom.png -format \"%[pixel:u.p{0,0}]\" info:)",
-      "Read(//Volumes/SSD/Projects/opensource/skills/**)",
-      "Read(//Volumes/SSD/Projects/opensource/skills/asdf-plugin/**)",
-      "Bash(mkdir -p /Volumes/SSD/Projects/opensource/skills/openscad)"
-    ],
-    "additionalDirectories": [
-      "/Volumes/SSD/Projects/opensource/skills"
-    ]
+    "allow": [],
+    "additionalDirectories": []
   }
 }

@@ -12,10 +12,13 @@ Valores que devem ser idênticos em todas as peças. Se divergirem, os furos nã
 | `canal_d` | `6mm` | Canal axial para fios em todo conector (0 = fechado) |
 | `thickness` | `5mm` | Espessura padrão da PLATE — mínimo `(relief_depth×2)+1` |
 | `pin_depth` | `3mm` | Profundidade do pino — caso mais restrito: PLATE (`thickness−relief_depth`) |
-| `edge_hole_d` | `3mm` | Furo de borda da PLATE (0 = desativado) |
+| `edge_hole_d` | `3mm` | Furo de borda de PLATE/ATOM (0 = desativado) |
 | `edge_hole_depth` | `4mm` | Profundidade do furo de borda |
-| `edge_relief_depth` | `1.5mm` | Profundidade do rebaixo de borda (0 = desativado) |
-| `edge_relief_height` | `2mm` | Altura do rebaixo de borda |
+| `edge_inset` | `2.5mm` | Furo de borda a esta distância das extremidades (= `thickness/2`) |
+| `edge_collar_w` | `0.4mm` | Largura radial do rebaixo/colar (= 1 bico de 0.4; 0 = desativado) |
+| `edge_collar_depth` | `1mm` | Profundidade do rebaixo / altura do colar |
+| `border_radius` | `0` | Acabamento das arestas externas (VERTEX: padrão `2`) |
+| `border_style` | `round` | Estilo do acabamento: `round` (raio) ou `chamfer` (chanfro 45°) |
 | `$fn` | `32` | Segmentos de cilindro |
 
 ## Derivados

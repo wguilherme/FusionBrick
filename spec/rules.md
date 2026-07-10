@@ -15,17 +15,19 @@ Consequências:
 
 ## Junção coplanar (lado a lado)
 
-Duas PLATEs encostadas borda a borda: furos de face ficam a `cell_size/2` de cada lado da junção → distância entre furos através da junção = `cell_size`. O grid se preserva automaticamente. Travamento **invisível** via [BRIDGE](parts/bridge.md) na interface de borda — pinos + alma enterrados, faces 100% livres, ATOM assenta sobre a junção.
+Duas PLATEs encostadas borda a borda: furos de face ficam a `cell_size/2` de cada lado da junção → distância entre furos através da junção = `cell_size`. O grid se preserva automaticamente. Travamento **invisível** via dowels [BRIDGE](parts/bridge.md) na interface de borda (2 por junção) — faces 100% livres, ATOM assenta sobre a junção.
 
 ## Interface de borda
 
-Segunda interface do sistema, nas bordas das PLATEs — complementa os furos de face sem competir com eles:
+Segunda interface do sistema, nas bordas de PLATEs e faces laterais de ATOMs — complementa os furos de face sem competir com eles. Interface pura pino → furo, sem rebaixos:
 
 - Furos de borda: `edge_hole_d = 3mm`, profundidade `4mm`, centrados na espessura
-- 2 por célula, a centro ± `cell_size/4` → **passo uniforme de `cell_size/2 = 10mm`**, inclusive atravessando junções
-- Rebaixo de borda: pocket `10 × 1.5 × 2mm` entre os 2 furos de cada célula — recebe alma do BRIDGE e nervura do CORNER
+- 2 por célula, **nas extremidades**: a `edge_inset = 2.5mm` (= `thickness/2`) de cada limite da célula
+- Distâncias: `15mm` dentro da célula; `5mm` através de junções — cada furo alinha com o centro da seção do CORNER (`5/2 = 2.5mm`)
+- ATOM: 4 furos por face lateral (2 embaixo + 2 em cima), mesmas posições → PLATE ao lado de ATOM conecta direto
+- **Rebaixo do colar**: boca de todo furo de borda ganha rebaixo `Ø3.8 × 1mm` (`edge_collar_w = 0.4` radial); todo pino tem colar `Ø3.6 × 1mm` na raiz → trava de profundidade (dowel divide 50/50, pino não afunda) e reforço da raiz
 - Pinos receptores: `edge_hole_d - tolerance = 2.8mm`
-- Usada por: [BRIDGE](parts/bridge.md) (junção coplanar invisível) e [CORNER](parts/corner.md) (junção 90°)
+- Usada por: [BRIDGE](parts/bridge.md) (dowel de junção coplanar), [CORNER](parts/corner.md) (junção 90° e L de corners), [PIN](parts/pin.md) (viga conectora configurável), [ELBOW](parts/elbow.md) (curva 90° arredondada), [VERTEX](parts/vertex.md) (quina 3-vias com ponta arredondada)
 
 Vantagem estrutural: junções por borda deixam furos de face e rebaixos 100% livres — LINK e ATOM conectam em qualquer célula, inclusive nas do canto.
 

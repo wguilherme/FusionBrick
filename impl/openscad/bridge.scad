@@ -1,60 +1,48 @@
 // ============================================================
 // BRIDGE — Design System 3D Modular
 // ============================================================
-// Junção coplanar INVISÍVEL entre duas PLATEs encostadas
-// borda a borda. Dois pinos (dowels) atravessam a junção
-// entrando nos furos de borda, unidos por uma alma fina que
-// fica enterrada nos rebaixos de borda das duas PLATEs.
+// Dowel de junção coplanar: pino duplo que atravessa a junção
+// entre duas PLATEs (ou PLATE↔ATOM) encostadas borda a borda,
+// entrando nos furos de borda de cada lado.
 //
 // Vista de cima (junção vertical no centro):
 //
 //   PLATE A      │      PLATE B
-//        ●━━━━━━━┿━━━━━━━●      ← pino Ø2.8 (furos de borda)
-//        ┃▒▒▒▒▒▒▒│▒▒▒▒▒▒▒┃      ← alma nos rebaixos de borda
-//        ●━━━━━━━┿━━━━━━━●      ← pino Ø2.8
-//                │ ← plates ENCOSTADAS — gap zero
+//        ━━━━━━━━┿━━━━━━━━      ← dowel Ø2.8 (metade em cada furo)
+//                │ ← peças ENCOSTADAS — gap zero
 //
-// A peça fica 100% enterrada: nenhum furo de face consumido,
-// nenhuma protrusão. ATOMs assentam sobre a junção normalmente.
-//
-// Por que pinos + alma:
-//   - pinos: cisalhamento e anti-rotação
-//   - alma : resiste flexão/abertura da junção (dobradiça)
+// Junção 100% invisível: nenhum furo de face consumido, nada
+// acima ou abaixo da superfície. Usar 2 dowels por junção
+// (um em cada furo de borda do par de células) para travar
+// rotação.
 //
 // Sem canal de fio: a seção Ø2.8 não comporta canal — fios
 // atravessam a junção pelos furos de face, que ficam livres.
 //
 // Parâmetros:
-// - cell_size         : passo do grid (pinos a cell_size/2)
-// - edge_hole_d       : furo de borda da PLATE (igual à PLATE)
-// - edge_hole_depth   : profundidade do furo de borda da PLATE
-// - edge_relief_depth : profundidade do rebaixo de borda da PLATE
-// - edge_relief_height: altura do rebaixo de borda da PLATE
-// - tolerance         : folga de encaixe
+// - edge_hole_d     : furo de borda da PLATE/ATOM (igual às peças)
+// - edge_hole_depth : profundidade do furo de borda
+// - tolerance       : folga de encaixe
 // ============================================================
 
-/* [Grid — manter igual à PLATE] */
+/* [Interface de borda — manter igual à PLATE/ATOM] */
 
-// Passo do grid — pinos ficam a cell_size/2 entre si
-cell_size = 20; // [5:1:100]
-
-/* [Interface de borda — manter igual à PLATE] */
-
-// Diâmetro do furo de borda da PLATE (mm)
+// Diâmetro do furo de borda (mm)
 edge_hole_d = 3; // [1:0.1:5]
 
-// Profundidade do furo de borda da PLATE (mm)
+// Profundidade do furo de borda (mm)
 edge_hole_depth = 4; // [1:0.5:10]
 
-// Profundidade do rebaixo de borda da PLATE (mm)
-edge_relief_depth = 1.5; // [0.5:0.1:3]
+// Rebaixo do colar na boca dos furos (manter igual à PLATE/ATOM)
+// Colar central no dowel: trava de profundidade — divide 50/50
+edge_collar_w = 0.4; // [0:0.1:1]
 
-// Altura do rebaixo de borda da PLATE (mm)
-edge_relief_height = 2; // [1:0.1:4]
+// Profundidade do rebaixo / meia-altura do colar (mm)
+edge_collar_depth = 1; // [0.5:0.25:2]
 
 /* [Tolerância de impressão] */
 
-// Folga de encaixe — reduz pinos e alma para caber
+// Folga de encaixe — reduz o pino para caber no furo de borda
 tolerance = 0.2; // [0:0.05:0.5]
 
 /* [Qualidade] */
@@ -67,35 +55,36 @@ $fn = 32;
 // Diâmetro efetivo do pino (com tolerância)
 pin_d = edge_hole_d - tolerance;
 
-// Meio-comprimento do pino em cada furo — menor que a
-// profundidade do furo para não bater no fundo
+// Diâmetro do colar central (assenta nos rebaixos das duas bocas)
+collar_d = edge_hole_d + 2 * edge_collar_w - tolerance;
+
+// Meio-comprimento em cada furo — menor que a profundidade
+// do furo para não bater no fundo
 pin_half_len = edge_hole_depth - 0.5;
 
-// Comprimento total de cada pino (dowel)
+// Comprimento total do dowel
 pin_len = pin_half_len * 2;
-
-// Alma — dimensões efetivas (com tolerância)
-web_len    = cell_size / 2 - tolerance;          // entre os pinos
-web_width  = edge_relief_depth * 2 - tolerance;  // através da junção
-web_height = edge_relief_height - tolerance;     // na espessura
 
 // ============================================================
 // MÓDULOS
 // ============================================================
 
 // ------------------------------------------------------------
-// Módulo: BRIDGE completa — centrada na origem
-// Junção no plano X=0; pinos ao longo de X em Y ± cell_size/4
+// Módulo: BRIDGE — dowel centrado na origem, eixo X
+// (junção fica no plano X = 0)
 // ------------------------------------------------------------
 module bridge() {
-    // Pinos (dowels) — atravessam a junção
-    for (y = [-cell_size / 4, cell_size / 4])
-        translate([-pin_half_len, y, 0])
-            rotate([0, 90, 0])
-                cylinder(d = pin_d, h = pin_len);
+    // Corpo do dowel
+    translate([-pin_half_len, 0, 0])
+        rotate([0, 90, 0])
+            cylinder(d = pin_d, h = pin_len);
 
-    // Alma — enterrada nos rebaixos de borda das duas PLATEs
-    cube([web_width, web_len, web_height], center = true);
+    // Colar central — 1 edge_collar_depth para cada lado da junção,
+    // assenta nos rebaixos das bocas dos dois furos
+    if (edge_collar_w > 0)
+        translate([-edge_collar_depth, 0, 0])
+            rotate([0, 90, 0])
+                cylinder(d = collar_d, h = edge_collar_depth * 2);
 }
 
 // ============================================================
@@ -108,10 +97,9 @@ color(part_color) bridge();
 // INFO — dimensões no console
 // ============================================================
 echo("=== BRIDGE ===");
-echo(str("Pinos              : 2 × Ø", pin_d, "mm × ", pin_len, "mm (", pin_half_len, "mm em cada PLATE)"));
-echo(str("Passo entre pinos  : ", cell_size / 2, "mm (= cell_size/2)"));
-echo(str("Alma               : ", web_width, " × ", web_len, " × ", web_height, "mm"));
+echo(str("Dowel              : Ø", pin_d, "mm × ", pin_len, "mm (", pin_half_len, "mm em cada peça)"));
+echo(str("Colar central      : ", edge_collar_w > 0 ? str("Ø", collar_d, "mm × ", edge_collar_depth * 2, "mm (trava 50/50)") : "sem colar"));
 echo(str("Tolerância         : ", tolerance, "mm"));
+echo("Uso                : 2 dowels por junção (um por furo de borda do par de células)");
 echo("---");
 echo(str("Pino cabe no furo (prof. ", edge_hole_depth, "mm): ", pin_half_len < edge_hole_depth ? "SIM" : "VERIFICAR"));
-echo(str("Alma cabe no rebaixo             : ", web_height < edge_relief_height && web_width < edge_relief_depth * 2 ? "SIM" : "VERIFICAR"));
